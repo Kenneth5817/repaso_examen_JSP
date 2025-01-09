@@ -1,4 +1,4 @@
-package org.example.examen_repaso.modelo;
+package org.example.examen_repaso.model;
 
 public class Comercial {
     private int id;

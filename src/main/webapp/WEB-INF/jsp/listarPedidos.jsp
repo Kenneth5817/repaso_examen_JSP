@@ -1,11 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: admin
-  Date: 09/01/2025
-  Time: 0:06
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <table>
     <thead>
@@ -24,6 +17,7 @@
     </tbody>
 </table>
 
+<!--Tabla pedidos con todos los datos arriba campos abajo valores-->
 <table>
     <thead>
     <tr>
@@ -45,17 +39,20 @@
             <td>${pedido.comercialNombre} ${pedido.comercialApellido1}</td>
             <td>
                 <a href="/pedidos/editar?id=${pedido.id}">Editar</a>
+                <a href="/pedidos/editar?id=${pedido.id}">Borrar</a>
             </td>
         </tr>
     </c:forEach>
     </tbody>
 </table>
+<!--Cantidad minima, maxima y buscar -->
 <form action="/pedidos/buscar" method="get">
     <input type="number" name="min" placeholder="Cantidad mínima">
     <input type="number" name="max" placeholder="Cantidad máxima">
     <button type="submit">Buscar</button>
 </form>
 
+<!--Tabla clave valor arriba campos, abajo valores-->
 <table>
     <thead>
     <tr>

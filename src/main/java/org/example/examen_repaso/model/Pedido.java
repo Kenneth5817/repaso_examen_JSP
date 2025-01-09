@@ -1,4 +1,4 @@
-package org.example.examen_repaso.modelo;
+package org.example.examen_repaso.model;
 
 import java.time.LocalDate;
 
@@ -8,6 +8,7 @@ public class Pedido {
     private LocalDate fecha;
     private int idCliente;
     private int idComercial;
+    private Cliente cliente;
 
     // Constructor vacío
     public Pedido() {
@@ -76,5 +77,9 @@ public class Pedido {
                 ", idCliente=" + idCliente +
                 ", idComercial=" + idComercial +
                 '}';
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;  // Asignación del valor pasado como parámetro a la propiedad cliente
     }
 }

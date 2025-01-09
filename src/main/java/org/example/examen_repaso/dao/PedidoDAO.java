@@ -1,100 +1,72 @@
 package org.example.examen_repaso.dao;
-import org.example.examen_repaso.modelo.Pedido;
+
+import org.example.examen_repaso.model.Pedido;
 import org.example.examen_repaso.util.DatabaseConnection;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public class PedidoDAO {
-    public List<Pedido> getPedidosConDetalle() throws SQLException {
-        List<Pedido> pedidos = new ArrayList<>();
-        String query = """
-            SELECT p.id, p.total, p.fecha, p.id_cliente, p.id_comercial
-            FROM pedido p
-        """;
+    public interface PedidoDAO {
+            static Pedido getById(int pedidoId) throws SQLException {
+                Pedido pedido = null;
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
+                String query = "SELECT * FROM pedido WHERE id = ?";
 
-            while (resultSet.next()) {
-                Pedido pedido = new Pedido();
-                pedido.setId(resultSet.getInt("id"));
-                pedido.setTotal(resultSet.getDouble("total"));
-                pedido.setFecha(resultSet.getDate("fecha").toLocalDate());
-                pedido.setIdCliente(resultSet.getInt("id_cliente"));
-                pedido.setIdComercial(resultSet.getInt("id_comercial"));
-                pedidos.add(pedido);
-            }
-        }
-        return pedidos;
-    }
+                try (Connection connection = DatabaseConnection.getConnection();
+                     PreparedStatement statement = connection.prepareStatement(query)) {
 
-    public void savePedido(Pedido pedido) throws SQLException {
-        String query = """
-            INSERT INTO pedido (total, fecha, id_cliente, id_comercial)
-            VALUES (?, ?, ?, ?)
-        """;
+                    statement.setInt(1, pedidoId);
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setDouble(1, pedido.getTotal());
-            statement.setDate(2, Date.valueOf(pedido.getFecha()));
-            statement.setInt(3, pedido.getIdCliente());
-            statement.setInt(4, pedido.getIdComercial());
-            statement.executeUpdate();
-        }
-    }
-
-    public Map<String, Integer> getResumenClientesPorComercial() throws SQLException {
-        String query = "SELECT CONCAT(comercial.nombre, ' ', comercial.apellido1, ' ', comercial.apellido2) AS comercial, " +
-                "COUNT(DISTINCT cliente.id) AS num_clientes " +
-                "FROM pedido " +
-                "JOIN comercial ON pedido.id_comercial = comercial.id " +
-                "JOIN cliente ON pedido.id_cliente = cliente.id " +
-                "GROUP BY comercial";
-        Map<String, Integer> resumen = new HashMap<>();
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String comercial = resultSet.getString("comercial");
-                int numClientes = resultSet.getInt("num_clientes");
-                resumen.put(comercial, numClientes);
-            }
-        }
-        return resumen;
-    }
-    public List<Pedido> getPedidosByCantidad(double min, double max) throws SQLException {
-        String query = "SELECT * FROM pedido WHERE total BETWEEN ? AND ?";
-        List<Pedido> pedidos = new ArrayList<>();
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setDouble(1, min);
-            statement.setDouble(2, max);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Pedido pedido = new Pedido();
-                    pedido.setId(resultSet.getInt("id"));
-                    pedido.setTotal(resultSet.getDouble("total"));
-                    pedido.setFecha(resultSet.getDate("fecha").toLocalDate());
-                    pedido.setIdCliente(resultSet.getInt("id_cliente"));
-                    pedido.setIdComercial(resultSet.getInt("id_comercial"));
-                    pedidos.add(pedido);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            pedido = new Pedido();
+                            pedido.setId(resultSet.getInt("id"));
+                            pedido.setTotal(resultSet.getDouble("total"));
+                            pedido.setFecha(resultSet.getDate("fecha").toLocalDate());
+                            pedido.setIdCliente(resultSet.getInt("id_cliente"));
+                            pedido.setIdComercial(resultSet.getInt("id_comercial"));
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    throw e; // Re-lanzar la excepción para manejarla a nivel superior
                 }
+
+                return pedido;
             }
-        }
-        return pedidos;
+
+
+        List<Pedido> getPedidos();
+
+        // Método para obtener los pedidos con su detalle
+        public List<Pedido> getPedidosConDetalle() throws SQLException;
+
+        // Método para guardar un nuevo pedido
+        public void savePedido(Pedido pedido) throws SQLException;
+
+        // Método para obtener un resumen de clientes por comercial
+        public Map<String, Integer> getResumenClientesPorComercial() throws SQLException;
+
+        // Método para obtener pedidos filtrados por cantidad
+        public List<Pedido> getPedidosByCantidad(double min, double max) throws SQLException;
+
+        // Método para obtener todos los pedidos (sin detalle específico)
+        List<Pedido> getAll() throws SQLException;
+        // Método para buscar un pedido por su ID
+        public Optional<Pedido> find(int id) throws SQLException;
+
+        // Método para actualizar un pedido
+        void update(Pedido pedido) throws SQLException;
+
+        // Método para eliminar un pedido
+        public void delete(int id) throws SQLException;
+
+        public PedidoDAOImpl create(Pedido pedido) throws SQLException;
+
+        public List<Pedido> buscarPedidosPorRango(double cantidadMin, double cantidadMax);
     }
-
-
-}

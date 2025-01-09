@@ -1,10 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: admin
-  Date: 09/01/2025
-  Time: 0:07
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -32,9 +26,7 @@
 
     <button type="submit">Guardar Cambios</button>
 </form>
-<c:if test="${not empty error}">
-    <p style="color: red;">${error}</p>
-</c:if>
+
 </body>
 </html>
 

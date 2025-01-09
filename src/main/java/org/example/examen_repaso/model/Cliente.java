@@ -1,4 +1,4 @@
-package org.example.examen_repaso.modelo;
+package org.example.examen_repaso.model;
 
 public class Cliente {
     private int id;
@@ -6,14 +6,14 @@ public class Cliente {
     private String apellido1;
     private String apellido2;
     private String ciudad;
-    private int categoria;
+    private String categoria;
 
     // Constructor vacío
     public Cliente() {
     }
 
     // Constructor con parámetros
-    public Cliente(int id, String nombre, String apellido1, String apellido2, String ciudad, int categoria) {
+    public Cliente(int id, String nombre, String apellido1, String apellido2, String ciudad, String categoria) {
         this.id = id;
         this.nombre = nombre;
         this.apellido1 = apellido1;
@@ -63,11 +63,12 @@ public class Cliente {
         this.ciudad = ciudad;
     }
 
-    public int getCategoria() {
+    public String getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(int categoria) {
+    // Setter corregido para devolver void
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
@@ -80,7 +81,7 @@ public class Cliente {
                 ", apellido1='" + apellido1 + '\'' +
                 ", apellido2='" + apellido2 + '\'' +
                 ", ciudad='" + ciudad + '\'' +
-                ", categoria=" + categoria +
+                ", categoria='" + categoria + '\'' +
                 '}';
     }
 }
